@@ -1,5 +1,5 @@
 #include <bits/stdc++.h> 
-//https://www.codingninjas.com/codestudio/problems/subset-sum_8230859?challengeSlug=striver-sde-challenge
+//https://www.codingninjas.com/codestudio/problems/subsets-ii_8230855?challengeSlug=striver-sde-challenge&leftPanelTab=1
 void solve(int idx,vector<int>&arr,vector<int> &num,set<vector<int>>&ans)
 {
         if(idx == arr.size())
