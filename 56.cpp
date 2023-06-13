@@ -63,3 +63,47 @@ vector<vector<int>> solveNQueens(int n)
     return ans;
 
 }
+//better time complexity but need more space
+vector<vector<int> > ans;
+void add(vector<vector<int> >& board, int n){
+    vector<int>temp;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            temp.push_back(board[i][j]);
+        }
+    }
+    ans.push_back(temp);
+}
+void nQueens(int col, vector<vector<int>>& board, int n, vector<bool>&LR,vector<bool>&LD, vector<bool>&UD){
+    // Base Case
+    if(col == n){
+        add(board, n);
+        return;
+    }
+
+    // Traversing Each row In Given Column
+    for(int row = 0; row < n; row++){
+        if(LR[row] == 0 && LD[row+col] ==0 && UD[n-1+col-row] == 0){
+            board[row][col] = 1;
+            LR[row] = 1;
+            LD[row+col] = 1;
+            UD[n-1+col-row] = 1;
+            nQueens(col + 1, board, n, LR, LD, UD);
+            // Backtrack
+            board[row][col] = 0;
+            LR[row] = 0;
+            LD[row+col] = 0;
+            UD[n-1+col-row] = 0;
+        }
+    }
+}
+vector<vector<int>> solveNQueens(int n) 
+{
+       vector<vector<int>> board(n, vector<int>(n, 0));  
+        // lr = LeftRow, LD = Lower Diagonal, UD = Upper Diagonal
+        vector<bool>LR(n, 0);
+        vector<bool>LD(2*n-1, 0);
+        vector<bool>UD(2*n-1, 0);
+        nQueens(0, board, n, LR, LD, UD);
+    return ans;
+}
