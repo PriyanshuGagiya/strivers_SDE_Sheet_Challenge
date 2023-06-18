@@ -19,6 +19,6 @@ vector<vector<int>> pwset(vector<int>v)
     int n=v.size();
     vector<int>temp;
     solve(0,ans,temp,v);
-    sort(ans.begin(),ans.end());
+    //sort(ans.begin(),ans.end());
     return ans;
 }
