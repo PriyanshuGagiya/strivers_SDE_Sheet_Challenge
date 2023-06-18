@@ -1,6 +1,6 @@
 #include <bits/stdc++.h> 
 //https://www.codingninjas.com/codestudio/problems/sort-a-stack_8230787?challengeSlug=striver-sde-challenge&leftPanelTab=1
-void  sort(stack<int> &stack,int num1)
+void insert(stack<int> &stack,int num1)
 {    
 	if(stack.empty()||stack.top()<num1)
 	{        
@@ -9,7 +9,7 @@ void  sort(stack<int> &stack,int num1)
 	}    
 	int n = stack.top();    
 	stack.pop();    
-	sort(stack,num1);   
+	insert(stack,num1);   
 	stack.push(n); 
 }
 
@@ -22,5 +22,5 @@ void sortStack(stack<int> &stack)
 	int num=stack.top();    
 	stack.pop();    
 	sortStack(stack);    
-	sort(stack,num); 
+	insert(stack,num); 
 }
