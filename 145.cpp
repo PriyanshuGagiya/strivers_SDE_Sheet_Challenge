@@ -44,3 +44,54 @@ int KthLargestNumber(TreeNode<int>* root, int k)
     return inorder[n-k];
     
 }
+//better approach
+#include <bits/stdc++.h> 
+/************************************************************
+    Following is the Binary Search Tree node structure
+    
+    template <typename T>
+    class TreeNode {
+        public :
+        T data;
+        TreeNode<T> *left;
+        TreeNode<T> *right;
+
+        TreeNode(T data) {
+            this -> data = data;
+            left = NULL;
+            right = NULL;
+        }
+
+        ~TreeNode() {
+            if(left)
+                delete left;
+            if(right)
+                delete right;
+        }
+    };
+
+************************************************************/
+TreeNode<int>* solve(TreeNode<int>*root,int &k)
+{
+    if(root==NULL)
+	return NULL;
+	
+	TreeNode<int>* right=solve(root->right,k);
+	if(right!=NULL)
+	return right;
+	k--;
+	
+	if(k==0)
+	return root;
+	
+	return solve(root->left,k);
+}
+int KthLargestNumber(TreeNode<int>* root, int k) 
+{
+    TreeNode<int>* ans=solve(root,k);
+    if(ans)
+    return ans->data;
+    return -1;
+    
+}
+
