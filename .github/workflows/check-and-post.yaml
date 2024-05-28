@@ -33,7 +33,14 @@ jobs:
         # Extract the diff of app.yaml
         DIFF=$(git diff HEAD^ HEAD -- config/app.yaml)
         
-        # Post the diff to the specified URL
-        curl -X POST https://ed08-203-110-85-250.ngrok-free.app/api \
+        # Get the commit metadata
+        AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+        AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+        COMMIT_HASH=$(git log -1 --pretty=format:'%H')
+        COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')
+
+        # Post the diff and metadata to the specified URL
+        curl -X POST hhttps://ed08-203-110-85-250.ngrok-free.app/api/v1/yaml-change \
           -H "Content-Type: application/json" \
-          -d "{\"diff\": \"${DIFF}\"}"
+          -d "{\"diff\": \"${DIFF}\", \"authorName\": \"${AUTHOR_NAME}\", \"authorEmail\": \"${AUTHOR_EMAIL}\", \"commitHash\": \"${COMMIT_HASH}\", \"commitMessage\": \"${COMMIT_MESSAGE}\"}"
+
