@@ -1,0 +1,39 @@
+name: Check and Post app.yaml Changes
+
+on: 
+  push:
+    branches:
+      - main  # or any branch you want to monitor
+
+jobs:
+  check_and_post:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Check if app.yaml changed
+      id: check_diff
+      run: |
+        if git diff --exit-code HEAD^ HEAD -- config/app.yaml; then
+          echo "changed=true" >> $GITHUB_ENV
+        else
+          echo "changed=false" >> $GITHUB_ENV
+        fi
+
+    - name: Post changes if app.yaml changed
+      if: env.changed == 'true'
+      run: |
+        # Extract the diff of app.yaml
+        DIFF=$(git diff HEAD^ HEAD -- config/app.yaml)
+        
+        # Post the diff to the specified URL
+        curl -X POST https://ed08-203-110-85-250.ngrok-free.app/api \
+          -H "Content-Type: application/json" \
+          -d "{\"diff\": \"${DIFF}\"}"
