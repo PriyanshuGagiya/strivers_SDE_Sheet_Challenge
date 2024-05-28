@@ -21,17 +21,28 @@ jobs:
     - name: Check if app.yaml changed
       id: check_diff
       run: |
-        if git diff --exit-code HEAD^ HEAD -- config/app.yaml; then
-          echo "changed=true" >> $GITHUB_ENV
+        # Check if there is a previous commit
+        if [ $(git rev-list --count HEAD) -gt 1 ]; then
+          # There is a previous commit, check if app.yaml changed
+          if git diff --exit-code HEAD^ HEAD -- config/app.yaml; then
+            echo "changed=true" >> $GITHUB_ENV
+          else
+            echo "changed=false" >> $GITHUB_ENV
+          fi
         else
-          echo "changed=false" >> $GITHUB_ENV
+          # No previous commit, consider the file as changed
+          echo "changed=true" >> $GITHUB_ENV
         fi
 
     - name: Post changes if app.yaml changed
       if: env.changed == 'true'
       run: |
         # Extract the diff of app.yaml
-        DIFF=$(git diff HEAD^ HEAD -- config/app.yaml)
+        if [ $(git rev-list --count HEAD) -gt 1 ]; then
+          DIFF=$(git diff HEAD^ HEAD -- config/app.yaml)
+        else
+          DIFF=$(git show HEAD:config/app.yaml)
+        fi
         
         # Get the commit metadata
         AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
@@ -40,7 +51,6 @@ jobs:
         COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')
 
         # Post the diff and metadata to the specified URL
-        curl -X POST hhttps://ed08-203-110-85-250.ngrok-free.app/api/v1/yaml-change \
+        curl -X POST https://ed08-203-110-85-250.ngrok-free.app/api/v1/yaml-change \
           -H "Content-Type: application/json" \
           -d "{\"diff\": \"${DIFF}\", \"authorName\": \"${AUTHOR_NAME}\", \"authorEmail\": \"${AUTHOR_EMAIL}\", \"commitHash\": \"${COMMIT_HASH}\", \"commitMessage\": \"${COMMIT_MESSAGE}\"}"
-
